@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Complaint — AI Grievance System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="top-navbar">
+    <a href="/" class="navbar-brand">
+        <div class="navbar-logo">🏛️</div>
+        <div class="navbar-title">
+            <span>AI Grievance System</span>
+            <span>Official Redressal Portal</span>
+        </div>
+    </a>
+    <div class="navbar-links">
+        <a href="/">Home</a>
+        <a href="/submit">Submit Complaint</a>
+        <a href="/check_status" class="active">Track Status</a>
+        <a href="/admin/login" class="nav-cta">Admin</a>
+    </div>
+</nav>
+
+<main class="main-content">
+<div class="content-wrapper">
+
+    <div class="page-header">
+        <h1>Track Your Complaint</h1>
+        <p>Enter your ticket reference number to see the current status and details.</p>
+    </div>
+
+    <!-- Search Card -->
+    <div class="card" style="margin-bottom: 24px;">
+        <div class="card-body">
+            <form id="statusForm">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label" for="ticket_id">Ticket Reference Number</label>
+                    <input
+                        type="text"
+                        id="ticket_id"
+                        class="form-control"
+                        placeholder="e.g. GR2026-20260106-ABCD12"
+                        style="font-family: var(--font-mono); font-size: 15px; letter-spacing: .5px;"
+                        autocomplete="off"
+                        required
+                    >
+                    <p class="form-hint">Format: GR2026-YYYYMMDD-XXXXXX</p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    🔍 Check Status
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Error box -->
+    <div class="error-box" id="errorBox">
+        <span class="err-icon">⚠️</span>
+        <div>
+            <p id="errorText">Ticket not found.</p>
+            <button onclick="resetForm()" class="btn btn-secondary" style="margin-top:8px;padding:6px 14px;font-size:13px;">Try Again</button>
+        </div>
+    </div>
+
+    <!-- Status Result -->
+    <div id="statusResult" style="display:none;">
+
+        <!-- Header Card -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+                <div>
+                    <div style="font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">Ticket Reference</div>
+                    <div class="ticket-id" style="font-size:20px;color:var(--navy-dark);" id="displayTicketId">—</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span class="badge" id="statusBadge">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Tracker -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header"><h2>Progress</h2></div>
+            <div class="card-body">
+                <div class="status-tracker">
+                    <div class="tracker-step done" id="trackSubmitted">
+                        <div class="tracker-dot">✓</div>
+                        <div class="tracker-label">Submitted</div>
+                    </div>
+                    <div class="tracker-step pending" id="trackReview">
+                        <div class="tracker-dot">⏳</div>
+                        <div class="tracker-label">Under Review</div>
+                    </div>
+                    <div class="tracker-step pending" id="trackResolved">
+                        <div class="tracker-dot">✓</div>
+                        <div class="tracker-label">Resolved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header"><h2>Complaint Details</h2></div>
+            <div class="card-body" style="padding-top: 8px;">
+                <div class="detail-pair">
+                    <span class="dp-key">Category</span>
+                    <span class="dp-val" id="statusCategory">—</span>
+                </div>
+                <div class="detail-pair">
+                    <span class="dp-key">Priority</span>
+                    <span class="dp-val"><span class="badge" id="statusPriority">—</span></span>
+                </div>
+                <div class="detail-pair">
+                    <span class="dp-key">Sentiment</span>
+                    <span class="dp-val" id="statusSentiment">—</span>
+                </div>
+                <div class="detail-pair">
+                    <span class="dp-key">Assigned Department</span>
+                    <span class="dp-val" id="statusDepartment">—</span>
+                </div>
+                <div class="detail-pair">
+                    <span class="dp-key">Submitted On</span>
+                    <span class="dp-val" id="statusCreatedAt">—</span>
+                </div>
+                <div class="detail-pair">
+                    <span class="dp-key">Expected Resolution</span>
+                    <span class="dp-val" id="statusTimeline">—</span>
+                </div>
+                <div class="detail-pair" style="align-items: flex-start;">
+                    <span class="dp-key">Complaint Text</span>
+                    <div style="flex:1;">
+                        <div class="complaint-text-box" id="statusComplaintText">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Notes -->
+        <div class="card" id="adminNotesCard" style="display:none;margin-bottom:20px;border-left:4px solid var(--amber);">
+            <div class="card-header"><h2>📋 Official Response</h2></div>
+            <div class="card-body">
+                <p id="statusAdminNotes" style="font-size:14px;color:var(--gray-700);line-height:1.7;">—</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button onclick="resetForm()" class="btn btn-secondary">
+                ↩ Check Another
+            </button>
+            <a href="/submit" class="btn btn-primary">
+                📝 Submit New Complaint
+            </a>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <div class="loading-title">Fetching Details</div>
+        <div class="loading-subtitle">Looking up your ticket reference...</div>
+    </div>
+</div>
+
+<footer class="site-footer" style="margin-top:40px;">
+    <p>© 2026 AI Grievance Redressal System</p>
+</footer>
+
+<script>
+const priorityBadgeClass = { 'High': 'badge-high', 'Medium': 'badge-medium', 'Low': 'badge-low' };
+const statusBadgeClass   = { 'Submitted': 'badge-submitted', 'Under Review': 'badge-under-review', 'Resolved': 'badge-resolved' };
+
+document.getElementById('statusForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const ticketId = document.getElementById('ticket_id').value.trim();
+    if (!ticketId) return;
+
+    const loading = document.getElementById('loadingOverlay');
+    const errorBox = document.getElementById('errorBox');
+    const result = document.getElementById('statusResult');
+
+    errorBox.classList.remove('show');
+    result.style.display = 'none';
+    loading.classList.add('active');
+
+    try {
+        const res = await fetch(`/get_status/${encodeURIComponent(ticketId)}`);
+        const data = await res.json();
+        loading.classList.remove('active');
+
+        if (data.success) {
+            populateStatus(data.complaint);
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            document.getElementById('errorText').textContent = data.error || 'Ticket not found.';
+            errorBox.classList.add('show');
+        }
+    } catch {
+        loading.classList.remove('active');
+        document.getElementById('errorText').textContent = 'Network error. Please try again.';
+        errorBox.classList.add('show');
+    }
+});
+
+function populateStatus(c) {
+    document.getElementById('displayTicketId').textContent = c.ticket_id;
+
+    const sb = document.getElementById('statusBadge');
+    sb.textContent = c.status;
+    sb.className = 'badge ' + (statusBadgeClass[c.status] || 'badge-default');
+
+    document.getElementById('statusCategory').textContent = c.category;
+
+    const pb = document.getElementById('statusPriority');
+    pb.textContent = c.priority;
+    pb.className = 'badge ' + (priorityBadgeClass[c.priority] || 'badge-default');
+
+    document.getElementById('statusSentiment').textContent = c.sentiment;
+    document.getElementById('statusDepartment').textContent = c.department;
+    document.getElementById('statusCreatedAt').textContent = new Date(c.created_at).toLocaleString();
+    document.getElementById('statusTimeline').textContent = c.timeline || '—';
+    document.getElementById('statusComplaintText').textContent = c.complaint_text;
+
+    if (c.admin_notes) {
+        document.getElementById('statusAdminNotes').textContent = c.admin_notes;
+        document.getElementById('adminNotesCard').style.display = 'block';
+    }
+
+    // Progress tracker
+    const review   = document.getElementById('trackReview');
+    const resolved = document.getElementById('trackResolved');
+    review.className   = 'tracker-step pending';
+    resolved.className = 'tracker-step pending';
+
+    if (c.status === 'Under Review' || c.status === 'Resolved') {
+        review.className = 'tracker-step done';
+        review.querySelector('.tracker-dot').textContent = '✓';
+    }
+    if (c.status === 'Resolved') {
+        resolved.className = 'tracker-step done';
+        resolved.querySelector('.tracker-dot').textContent = '✓';
+    }
+    if (c.status === 'Under Review') {
+        review.className = 'tracker-step active';
+    }
+}
+
+function resetForm() {
+    document.getElementById('statusResult').style.display = 'none';
+    document.getElementById('errorBox').classList.remove('show');
+    document.getElementById('ticket_id').value = '';
+    document.getElementById('adminNotesCard').style.display = 'none';
+    document.getElementById('ticket_id').focus();
+}
+</script>
+</body>
+</html>

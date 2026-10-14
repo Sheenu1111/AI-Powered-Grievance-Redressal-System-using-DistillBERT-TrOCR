@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Grievance Redressal System — Official Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- TOP NAVBAR -->
+<nav class="top-navbar">
+    <a href="/" class="navbar-brand">
+        <div class="navbar-logo">🏛️</div>
+        <div class="navbar-title">
+            <span>AI Grievance System</span>
+            <span>Official Redressal Portal</span>
+        </div>
+    </a>
+    <div class="navbar-links">
+        <a href="/" class="active">Home</a>
+        <a href="/submit">Submit Complaint</a>
+        <a href="/check_status">Track Status</a>
+        <a href="/admin/login" class="nav-cta">Admin Login</a>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main-content" style="padding: 0; background: var(--gray-100);">
+
+    <!-- Hero -->
+    <div style="max-width: 1100px; margin: 0 auto; padding: 40px 24px 32px;">
+        <div class="landing-hero">
+            <div class="hero-badge">🤖 Powered by DistilBERT + TrOCR AI</div>
+            <h1>Intelligent Grievance<br>Redressal System</h1>
+            <p>
+                Submit complaints via text or handwritten image. Our AI instantly categorizes,
+                prioritizes, and routes every grievance to the correct department — 24/7.
+            </p>
+            <div class="hero-cta-group">
+                <a href="/submit" class="hero-cta-primary">
+                    📝 Submit Your Complaint
+                </a>
+                <a href="/check_status" class="hero-cta-secondary">
+                    🔍 Track Complaint
+                </a>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-box">✍️</div>
+                <h3>Handwriting Recognition</h3>
+                <p>Upload handwritten complaints. Our TrOCR model digitizes and processes your handwriting with high accuracy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">🎯</div>
+                <h3>DistilBERT Classification</h3>
+                <p>NLP-based zero-shot classifier automatically categorizes complaints across 7 departments without manual rules.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">🚨</div>
+                <h3>Smart Priority Engine</h3>
+                <p>Multi-factor priority detection — considers severity, duration, scope, and real-world urgency indicators.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">😤</div>
+                <h3>Sentiment Analysis</h3>
+                <p>VADER detects emotional tone — Angry, Frustrated, Neutral — to flag high-frustration cases immediately.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">🏢</div>
+                <h3>Auto-Department Routing</h3>
+                <p>Zero manual intervention. Complaints are automatically routed to the responsible department.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">📊</div>
+                <h3>Real-Time Tracking</h3>
+                <p>Instant ticket ID. Track status 24/7 through submitted → under review → resolved pipeline.</p>
+            </div>
+        </div>
+
+        <!-- Workflow -->
+        <div class="workflow-section">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>End-to-end AI pipeline from complaint to resolution</p>
+            </div>
+            <div class="steps-flow">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <h4>Upload / Type</h4>
+                    <p>Text input or image upload (handwritten/scanned PDF)</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <h4>OCR Extraction</h4>
+                    <p>OpenCV preprocessing + TrOCR handwriting recognition</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <h4>AI Analysis</h4>
+                    <p>DistilBERT classifies category, priority, and sentiment</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <h4>Auto-Route</h4>
+                    <p>Department assigned, ticket generated, DB stored</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">5</div>
+                    <h4>Track & Resolve</h4>
+                    <p>Citizen tracks status; admin updates progress</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Banner -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px;margin-bottom:32px;">
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;text-align:center;box-shadow:var(--shadow-sm);">
+                <div style="font-size:32px;font-weight:800;color:var(--blue);margin-bottom:4px;">&lt; 5s</div>
+                <div style="font-size:13px;color:var(--gray-500);font-weight:500;">Processing Time</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;text-align:center;box-shadow:var(--shadow-sm);">
+                <div style="font-size:32px;font-weight:800;color:var(--green);margin-bottom:4px;">7</div>
+                <div style="font-size:13px;color:var(--gray-500);font-weight:500;">Departments Covered</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;text-align:center;box-shadow:var(--shadow-sm);">
+                <div style="font-size:32px;font-weight:800;color:var(--amber);margin-bottom:4px;">24/7</div>
+                <div style="font-size:13px;color:var(--gray-500);font-weight:500;">System Availability</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;text-align:center;box-shadow:var(--shadow-sm);">
+                <div style="font-size:32px;font-weight:800;color:var(--teal);margin-bottom:4px;">AI</div>
+                <div style="font-size:13px;color:var(--gray-500);font-weight:500;">Automated Routing</div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);border-radius:var(--radius-xl);padding:44px;text-align:center;">
+            <h2 style="font-size:24px;font-weight:800;color:var(--white);margin-bottom:10px;">Ready to File Your Complaint?</h2>
+            <p style="color:rgba(255,255,255,.75);font-size:15px;margin-bottom:26px;">
+                Get instant tracking ID. Your complaint reaches the right desk within minutes.
+            </p>
+            <a href="/submit" class="hero-cta-primary" style="display:inline-flex;">
+                Submit Complaint Now →
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer" style="margin-top:40px;">
+    <p>© 2026 AI Grievance Redressal System &nbsp;|&nbsp; Government of India</p>
+    <div class="footer-links">
+        <a href="/submit">Submit</a>
+        <a href="/check_status">Track</a>
+        <a href="/admin/login">Admin</a>
+    </div>
+</footer>
+
+</body>
+</html>

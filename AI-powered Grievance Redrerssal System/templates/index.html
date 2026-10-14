@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Complaint — AI Grievance System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="top-navbar">
+    <a href="/" class="navbar-brand">
+        <div class="navbar-logo">🏛️</div>
+        <div class="navbar-title">
+            <span>AI Grievance System</span>
+            <span>Official Redressal Portal</span>
+        </div>
+    </a>
+    <div class="navbar-links">
+        <a href="/">Home</a>
+        <a href="/submit" class="active">Submit Complaint</a>
+        <a href="/check_status">Track Status</a>
+        <a href="/admin/login" class="nav-cta">Admin</a>
+    </div>
+</nav>
+
+<main class="main-content">
+<div class="content-wrapper">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Submit a Complaint</h1>
+        <p>Your complaint is processed by AI within seconds and routed to the correct department.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Complaint Details</h2>
+        </div>
+        <div class="card-body">
+
+            <!-- Info Banner -->
+            <div class="info-banner">
+                <p>📌 How it works</p>
+                <ul>
+                    <li>✍️&nbsp; Type your complaint directly or upload a handwritten image</li>
+                    <li>🤖&nbsp; DistilBERT AI classifies category, priority and sentiment automatically</li>
+                    <li>🎫&nbsp; You receive a unique Ticket ID for real-time tracking</li>
+                    <li>🏢&nbsp; Complaint is routed to the responsible department instantly</li>
+                </ul>
+            </div>
+
+            <form id="complaintForm">
+
+                <!-- Input Method Tabs -->
+                <div class="form-group">
+                    <label class="form-label">Choose Input Method</label>
+                    <div class="method-tabs">
+                        <button type="button" class="method-tab active" data-method="text">
+                            📝 Type Complaint
+                        </button>
+                        <button type="button" class="method-tab" data-method="file">
+                            📷 Upload Image / PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Text Input -->
+                <div id="textInputSection">
+                    <div class="form-group">
+                        <label class="form-label" for="complaint_text">
+                            Describe Your Complaint <span class="required">*</span>
+                        </label>
+                        <textarea
+                            id="complaint_text"
+                            name="complaint_text"
+                            class="form-control"
+                            rows="7"
+                            placeholder="Example: The water supply in Sector 12 has been completely disrupted for the past 4 days. This is severely affecting over 200 families. We need immediate action..."
+                        ></textarea>
+                        <p class="form-hint">Be specific — include location, duration, and number of people affected to help AI prioritize correctly.</p>
+                    </div>
+                </div>
+
+                <!-- File Input -->
+                <div id="fileInputSection" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Upload Handwritten or Scanned Complaint</label>
+                        <div class="file-upload-area" id="dropZone">
+                            <input type="file" id="complaint_file" name="complaint_file"
+                                   accept="image/*,.pdf" hidden>
+                            <div class="upload-icon-wrap">📁</div>
+                            <p class="upload-title">Drop files here or <label for="complaint_file" style="cursor:pointer;color:var(--blue);text-decoration:underline;">browse</label></p>
+                            <p class="upload-subtitle">Supports JPG, PNG, PDF &mdash; up to 16 MB</p>
+                        </div>
+                        <div class="file-preview" id="filePreview"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitBtn">
+                    🚀 Submit Complaint
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Result Card -->
+    <div class="result-card" id="resultCard">
+        <div class="result-card-header">
+            <div class="check-icon">✓</div>
+            <div>
+                <h3>Complaint Submitted Successfully!</h3>
+                <p>Your ticket has been created and routed to the correct department.</p>
+            </div>
+        </div>
+        <div class="result-card-body">
+
+            <!-- Ticket Box -->
+            <div class="ticket-box">
+                <div>
+                    <div class="label">Ticket Reference Number</div>
+                    <div class="ticket-id" id="ticketId">—</div>
+                </div>
+                <button class="copy-btn" onclick="copyTicketId()" id="copyBtn">
+                    📋 Copy ID
+                </button>
+            </div>
+
+            <!-- AI Analysis Grid -->
+            <div class="analysis-grid">
+                <div class="analysis-item">
+                    <div class="ai-label">Category</div>
+                    <div class="ai-value" id="resultCategory">—</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="ai-label">Priority</div>
+                    <div class="ai-value" id="resultPriority">—</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="ai-label">Sentiment</div>
+                    <div class="ai-value" id="resultSentiment">—</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="ai-label">Assigned Department</div>
+                    <div class="ai-value" id="resultDepartment">—</div>
+                </div>
+                <div class="analysis-item">
+                    <div class="ai-label">Expected Resolution</div>
+                    <div class="ai-value" id="resultTimeline">—</div>
+                </div>
+            </div>
+
+            <!-- Extracted Text -->
+            <div class="extracted-text-box">
+                <div class="label">Processed Complaint Text</div>
+                <div class="extracted-text" id="extractedText">—</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="result-actions">
+                <button onclick="location.reload()" class="btn btn-secondary">
+                    ↩ Submit Another
+                </button>
+                <a href="/check_status" class="btn btn-primary">
+                    📡 Track This Complaint →
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="spinner"></div>
+        <div class="loading-title">Processing Your Complaint</div>
+        <div class="loading-subtitle">AI models are analyzing your submission</div>
+        <div class="ai-steps">
+            <div class="ai-step" id="step1"><div class="step-dot"></div>Preprocessing input</div>
+            <div class="ai-step" id="step2"><div class="step-dot"></div>Running OCR (if image)</div>
+            <div class="ai-step" id="step3"><div class="step-dot"></div>DistilBERT classification</div>
+            <div class="ai-step" id="step4"><div class="step-dot"></div>Priority & sentiment analysis</div>
+            <div class="ai-step" id="step5"><div class="step-dot"></div>Generating ticket ID</div>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer" style="margin-top: 40px;">
+    <p>© 2026 AI Grievance Redressal System</p>
+    <div class="footer-links">
+        <a href="/submit">Submit</a>
+        <a href="/check_status">Track</a>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
